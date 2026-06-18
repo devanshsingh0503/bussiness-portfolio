@@ -487,10 +487,115 @@
   .contact-card-label { font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 3px; }
   .contact-card-value { font-size: 14px; font-weight: 600; }
 
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(8,8,16,0.85);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 40px;
+    width: 100%; max-width: 520px;
+    position: relative;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,111,247,0.1);
+  }
+  .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-size: 18px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--border); color: var(--text); }
+
+  .modal-eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: 8px;
+  }
+  .modal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.3px; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 14px;
+    color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none; width: 100%;
+    cursor: text;
+  }
+  .form-group select { cursor: pointer; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(167,139,250,0.1);
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: rgba(136,136,170,0.5); }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+  .form-group select option { background: var(--bg3); }
+
+  .form-submit {
+    width: 100%; padding: 14px;
+    background: var(--accent); color: white;
+    border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif;
+    cursor: pointer; margin-top: 6px;
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .form-submit::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--accent2), var(--accent3));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .form-submit:hover::before { opacity: 1; }
+  .form-submit:hover { transform: translateY(-1px); box-shadow: 0 10px 30px var(--glow); }
+  .form-submit span { position: relative; z-index: 1; }
+  .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .form-success {
+    text-align: center; padding: 20px 0;
+    display: none;
+  }
+  .form-success .success-icon { font-size: 48px; margin-bottom: 16px; }
+  .form-success h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px; font-weight: 700; margin-bottom: 8px;
+  }
+  .form-success p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  .form-error-msg {
+    font-size: 12px; color: #f87171; margin-top: 16px;
+    text-align: center; display: none;
+  }
+
   /* Mobile */
   @media (max-width: 768px) {
     .contact-cards { grid-template-columns: 1fr; }
     .skills-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .modal { padding: 28px 20px; }
     nav { padding: 16px 20px; }
     .nav-links { display: none; }
     section { padding: 60px 20px; }
@@ -1023,6 +1128,193 @@
   </footer>
 
 </main>
+
+<!-- PROJECT INQUIRY MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <div id="formContent">
+      <div class="modal-eyebrow">New Project</div>
+      <h2 class="modal-title" id="modalTitle">Let's build something great</h2>
+      <p class="modal-sub">Fill in the details below and I'll get back to you within 24 hours.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fname">First Name *</label>
+          <input type="text" id="fname" placeholder="Rahul" required />
+        </div>
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" id="lname" placeholder="Sharma" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="femail">Email Address *</label>
+        <input type="email" id="femail" placeholder="rahul@example.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="fphone">Phone / WhatsApp</label>
+        <input type="tel" id="fphone" placeholder="+91 98765 43210" />
+      </div>
+
+      <div class="form-group">
+        <label for="ftype">Project Type *</label>
+        <select id="ftype" required>
+          <option value="" disabled selected>Select a project type</option>
+          <option>Business / Agency Website</option>
+          <option>Real Estate Platform</option>
+          <option>Healthcare / Clinic Website</option>
+          <option>Fitness / Gym Website</option>
+          <option>AI / SaaS Product</option>
+          <option>E-commerce Store</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="fbudget">Budget Range</label>
+        <input type="text" id="fbudget" placeholder="e.g. ₹25,000 or $500" />
+      </div>
+
+      <div class="form-group">
+        <label for="fmsg">Tell me about your project *</label>
+        <textarea id="fmsg" placeholder="Describe what you want to build, your goals, timeline, or anything else that would help me understand your project..." required></textarea>
+      </div>
+
+      <button class="form-submit" id="formSubmit" onclick="submitForm()">
+        <span id="submitLabel">Send Project Details →</span>
+      </button>
+      <div class="form-error-msg" id="formError">Something went wrong. Please email directly at dsingh05032004@gmail.com</div>
+    </div>
+
+    <div class="form-success" id="formSuccess">
+      <div class="success-icon">🎉</div>
+      <h3>Message sent!</h3>
+      <p>Thanks for reaching out. I'll review your project details and get back to you within 24 hours.</p>
+    </div>
+  </div>
+</div>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  (function() {
+    emailjs.init({ publicKey: 'tn8MqoQeKzrJXl_P0' });
+  })();
+
+  // Modal open/close
+  function openModal() {
+    document.getElementById('modalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Reset form when reopening
+    document.getElementById('formContent').style.display = 'block';
+    document.getElementById('formSuccess').style.display = 'none';
+    document.getElementById('formError').style.display = 'none';
+    document.getElementById('formSubmit').disabled = false;
+    document.getElementById('submitLabel').textContent = 'Send Project Details →';
+  }
+  function closeModal() {
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalBackdrop').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // Wire up ALL CTA buttons to open modal
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.btn-primary, .nav-cta, .btn-secondary').forEach(btn => {
+      const href = btn.getAttribute('href') || '';
+      if (href.includes('mailto') || href.includes('#contact') || href === '#contact') {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          openModal();
+        });
+      }
+    });
+  });
+
+  // Email validation
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Submit form via EmailJS
+  async function submitForm() {
+    const btn = document.getElementById('formSubmit');
+    const label = document.getElementById('submitLabel');
+    const errEl = document.getElementById('formError');
+
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const femail = document.getElementById('femail').value.trim();
+    const fphone = document.getElementById('fphone').value.trim();
+    const ftype = document.getElementById('ftype').value;
+    const fbudget = document.getElementById('fbudget').value;
+    const fmsg = document.getElementById('fmsg').value.trim();
+
+    // Validation
+    if (!fname) {
+      errEl.textContent = 'Please enter your first name.';
+      errEl.style.display = 'block';
+      document.getElementById('fname').focus();
+      return;
+    }
+    if (!femail || !isValidEmail(femail)) {
+      errEl.textContent = 'Please enter a valid email address.';
+      errEl.style.display = 'block';
+      document.getElementById('femail').focus();
+      return;
+    }
+    if (!ftype) {
+      errEl.textContent = 'Please select a project type.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (!fmsg) {
+      errEl.textContent = 'Please tell me about your project.';
+      errEl.style.display = 'block';
+      document.getElementById('fmsg').focus();
+      return;
+    }
+
+    btn.disabled = true;
+    label.textContent = '⏳ Sending...';
+    errEl.style.display = 'none';
+
+    const fullName = (fname + ' ' + lname).trim();
+    const now = new Date();
+    const timeStr = now.toLocaleString('en-IN', { dateStyle: 'full', timeStyle: 'short' });
+
+    const params = {
+      name: fullName,
+      time: timeStr,
+      message:
+        'Email: ' + femail + '\n' +
+        'Phone: ' + (fphone || 'Not provided') + '\n' +
+        'Project Type: ' + ftype + '\n' +
+        'Budget: ' + (fbudget || 'Not specified') + '\n\n' +
+        'Message:\n' + fmsg
+    };
+
+    try {
+      await emailjs.send('service_kqxwa3g', 'template_6bc5coo', params);
+      document.getElementById('formContent').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      errEl.textContent = 'Failed to send. Please email directly: dsingh05032004@gmail.com';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      label.textContent = 'Send Project Details →';
+    }
+  }
+</script>
 
 <script>
   // Custom cursor

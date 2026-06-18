@@ -1303,12 +1303,28 @@
     };
 
     try {
-      await emailjs.send('service_kqxwa3g', 'template_6bc5coo', params);
-      document.getElementById('formContent').style.display = 'none';
-      document.getElementById('formSuccess').style.display = 'block';
+      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: 'service_k3ggo96',
+          template_id: 'template_6bc5coo',
+          user_id: 'tn8MqoQeKzrJXl_P0',
+          template_params: params
+        })
+      });
+
+      if (response.ok) {
+        document.getElementById('formContent').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        const errText = await response.text();
+        console.error('EmailJS HTTP error:', response.status, errText);
+        throw new Error(response.status + ': ' + errText);
+      }
     } catch (err) {
-      console.error('EmailJS error:', err);
-      errEl.textContent = 'Failed to send. Please email directly: dsingh05032004@gmail.com';
+      console.error('Send error:', err);
+      errEl.textContent = 'Failed to send (' + err.message + '). Email: dsingh05032004@gmail.com';
       errEl.style.display = 'block';
       btn.disabled = false;
       label.textContent = 'Send Project Details →';
